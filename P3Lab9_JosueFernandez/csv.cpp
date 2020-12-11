@@ -195,15 +195,15 @@ void csv::truncate_column(int index) {
         this->widths.erase(this->widths.begin() + index);
 
         for (int i = 0; i < data_count; i++) {
-            //Eliminamos el elemento indicado de cada fila
-            ((vector<string>)(((vector<vector < string>>)data)[i])).clear();
-//            vector<string> row;
-//            for (int j = 0; j < columnas; j++) {
-//                if(j != index){
-//                    
-//                }
-//            }
-            
+            //Eliminamos el elemento indicado de cada fila e insertamos uno nuevo
+            vector<string> row;
+            for (int j = 0; j < columnas; j++) {
+                if (j != index) {
+                    row.push_back(((vector<string>)(((vector<vector < string>>)data).at(i))).at(j));
+                }
+            }
+            data.erase(data.begin() + i);
+            data.insert(data.begin() + i, row);
         }
     }
 }
