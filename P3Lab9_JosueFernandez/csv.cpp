@@ -18,6 +18,8 @@ using std::string;
 #include <iostream>
 using std::cout;
 using std::endl;
+
+#include <iomanip>
 using std::setw;
 
 csv::csv()
@@ -52,7 +54,6 @@ void csv::load_file(bool headers) {
 
     //Si el archivo está abierto...
     if (input_file.is_open()) {
-
         //Liberamos los datos actuales
         for (int i = 0; i < data_count; i++) {
             ((vector<string>) data[i]).clear();
@@ -113,6 +114,8 @@ void csv::load_file(bool headers) {
 
         }
 
+    } else {
+        cout << "No se encontró el archivo CSV\n";
     }
 }
 
@@ -121,7 +124,7 @@ void csv::print_data() {
         for (int i = 0; i < headers.size(); i++) {
             cout << headers[i] << '\t';
         }
-        cout << endl;
+        cout << endl << endl << endl;
     }
     
     for (int i = 0; i < data_count; i++) {
@@ -130,4 +133,28 @@ void csv::print_data() {
         }
         cout << endl << endl;
     }
+}
+
+string csv::get_file_name() {
+    return this->file_name;
+}
+
+void csv::set_file_name(string file_name) {
+    this->file_name = file_name;
+}
+
+vector<string> csv::get_headers() {
+    return this->headers;
+}
+
+vector<vector<string> > csv::get_data() {
+    return this->data;
+}
+
+int csv::get_data_count() {
+    return this->data_count;
+}
+
+bool csv::get_has_headers() {
+    return this->has_headers;
 }

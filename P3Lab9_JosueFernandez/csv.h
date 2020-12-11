@@ -40,6 +40,24 @@ public:
     /* Imprime los datos en forma de tabla con sus encabezados (si los hay). */
     void print_data();
     
+    /* Getter de file_name */
+    string get_file_name();
+    
+    /* Setter de file_name */
+    void set_file_name(string file_name);
+    
+    /* Getter de headers */
+    vector<string> get_headers();
+    
+    /* Getter de data */
+    vector<vector<string>> get_data();
+    
+    /* Getter de data_count */
+    int get_data_count();
+    
+    /* Getter de has_headers */
+    bool get_has_headers();
+    
 private:
     /* Nombre del archivo físico que contiene los datos. */
     string file_name;
