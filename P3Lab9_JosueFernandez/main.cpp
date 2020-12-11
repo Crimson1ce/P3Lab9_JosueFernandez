@@ -17,6 +17,12 @@ int main(int argc, char** argv) {
     
     file->print_data();
     
+    file->truncate_column(5);
+    file->truncate_column(3);
+    file->truncate_row(2);
+    
+    file->print_data();
+    
     delete file;
     
     return 0;

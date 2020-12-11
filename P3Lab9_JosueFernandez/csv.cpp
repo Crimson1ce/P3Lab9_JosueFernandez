@@ -120,18 +120,18 @@ void csv::load_file(bool headers) {
 }
 
 void csv::print_data() {
-    if(has_headers){
+    if (has_headers) {
         for (int i = 0; i < headers.size(); i++) {
             cout << headers[i] << '\t';
         }
         cout << endl << endl << endl;
     }
-    
+
     for (int i = 0; i < data_count; i++) {
         for (int j = 0; j < ((vector<string>)data.at(0)).size(); j++) {
             cout << data[i][j] << '\t';
         }
-        cout << endl << endl;
+        cout << endl;
     }
 }
 
@@ -158,3 +158,31 @@ int csv::get_data_count() {
 bool csv::get_has_headers() {
     return this->has_headers;
 }
+
+void csv::truncate_column(int index) {
+    // Validamos que haya al menos un registro, y
+    // que index esté en el rango correcto
+    if (data_count > 0 && index >= 0 && index < ((vector<string>)this->data[0]).size()) {
+        int columnas = this->data[0].size();
+
+        //Eliminamos el encabezado, si hay
+        if (has_headers) {
+            this->headers.erase(this->headers.begin() + index);
+        }
+
+        for (int i = 0; i < data_count; i++) {
+            //Eliminamos el elemento indicado de cada fila
+            ((vector<string>)this->data[i]).erase(((vector<string>)this->data[i]).begin() + index);
+        }
+    }
+}
+
+void csv::truncate_row(int index) {
+    // Validamos que index esté en el rango correcto
+    if (index >= 0 && index < data_count) {
+        //Eliminamos la fila indicada
+        this->data.erase(this->data.begin() + index);
+        this->data_count--;
+    }
+}
+

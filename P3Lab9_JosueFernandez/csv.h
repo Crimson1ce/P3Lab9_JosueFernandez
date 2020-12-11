@@ -58,6 +58,13 @@ public:
     /* Getter de has_headers */
     bool get_has_headers();
     
+    /* Elimina la columna indicada. Se debe actualizar el atributo data. */
+    void truncate_column(int index);
+    
+    /* Elimina la fila indicada. Se debe actualizar el atributo 
+     * data y el atributo data_count. */
+    void truncate_row(int index);
+    
 private:
     /* Nombre del archivo físico que contiene los datos. */
     string file_name;
