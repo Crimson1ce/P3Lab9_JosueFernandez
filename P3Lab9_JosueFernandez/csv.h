@@ -65,6 +65,24 @@ public:
      * data y el atributo data_count. */
     void truncate_row(int index);
     
+    void write_file();
+    
+    vector<string> get_row(int index);
+    
+    vector<string> get_column(int index);
+    
+    vector<string> get_max(int column);
+    
+    vector<string> get_min(int column);
+    
+    csv* concat(csv* file, string filename);
+    
+    /* Ordena los datos con base en la columna column, 
+     * si up es true se hace ascendentemente, de lo contrario 
+     * lo ordena de manera descendente. Se retornan los datos 
+     * ordenados sin alterar el atributo data. */
+    vector<vector<string>> sort_data(int column, bool up);
+    
 private:
     /* Nombre del archivo físico que contiene los datos. */
     string file_name;
@@ -81,6 +99,10 @@ private:
     /* Numero de registros en el archivo, 
      * debe actualizarlo cuando sea necesario. */
     int data_count;
+    
+    /* Almacena el numero de espacios necesitados para cada columna */
+    vector<int> widths;
+    
 };
 
 #endif /* CSV_H */

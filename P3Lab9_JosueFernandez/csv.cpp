@@ -15,6 +15,9 @@ using std::istringstream;
 #include <string>
 using std::string;
 
+#include <ios>
+using std::ios;
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -45,6 +48,7 @@ csv::~csv() {
         ((vector<string>) data[i]).clear();
     }
     data.clear();
+    widths.clear();
 }
 
 void csv::load_file(bool headers) {
@@ -60,7 +64,10 @@ void csv::load_file(bool headers) {
         }
         data.clear();
 
+        widths.clear();
+
         this->has_headers = headers;
+
 
         this->headers.clear();
 
@@ -80,6 +87,7 @@ void csv::load_file(bool headers) {
             //Cargamos cada encabezado
             while (getline(isstream, token, ',')) {
                 this->headers.push_back(token);
+                widths.push_back(token.length());
             }
         }
 
@@ -106,12 +114,25 @@ void csv::load_file(bool headers) {
                 registro.push_back(token);
             }
 
+            if (widths.size() == 0) {
+                for (int i = 0; i < registro.size(); i++) {
+                    widths.push_back(((string) registro[i]).length());
+                }
+            } else {
+                for (int i = 0; i < widths.size(); i++) {
+                    if (((string) registro[i]).length() > widths[i]) {
+                        widths.erase(widths.begin() + i);
+                        widths.insert(widths.begin() + i, ((string) registro[i]).length());
+                    }
+                }
+            }
+
+
             //Añadimos el nuevo registro a la tabla
             data.push_back(registro);
 
             //Incrementamos el numero de registros por cada linea
             this->data_count++;
-
         }
 
     } else {
@@ -122,14 +143,14 @@ void csv::load_file(bool headers) {
 void csv::print_data() {
     if (has_headers) {
         for (int i = 0; i < headers.size(); i++) {
-            cout << headers[i] << '\t';
+            cout << setw(widths[i] + 5) << headers[i];
         }
-        cout << endl << endl << endl;
+        cout << endl << endl;
     }
 
     for (int i = 0; i < data_count; i++) {
         for (int j = 0; j < ((vector<string>)data.at(0)).size(); j++) {
-            cout << data[i][j] << '\t';
+            cout << setw(widths[j] + 5) << data[i][j];
         }
         cout << endl;
     }
@@ -162,17 +183,27 @@ bool csv::get_has_headers() {
 void csv::truncate_column(int index) {
     // Validamos que haya al menos un registro, y
     // que index esté en el rango correcto
-    if (data_count > 0 && index >= 0 && index < ((vector<string>)this->data[0]).size()) {
-        int columnas = this->data[0].size();
+    if (data_count > 0 && index >= 0 && index < ((vector<string>)this->data.at(0)).size()) {
+        int columnas = this->data.at(0).size();
 
         //Eliminamos el encabezado, si hay
         if (has_headers) {
             this->headers.erase(this->headers.begin() + index);
         }
 
+        //Eliminamos el ancho para la columna
+        this->widths.erase(this->widths.begin() + index);
+
         for (int i = 0; i < data_count; i++) {
             //Eliminamos el elemento indicado de cada fila
-            ((vector<string>)this->data[i]).erase(((vector<string>)this->data[i]).begin() + index);
+            ((vector<string>)(((vector<vector < string>>)data)[i])).clear();
+//            vector<string> row;
+//            for (int j = 0; j < columnas; j++) {
+//                if(j != index){
+//                    
+//                }
+//            }
+            
         }
     }
 }
@@ -184,5 +215,114 @@ void csv::truncate_row(int index) {
         this->data.erase(this->data.begin() + index);
         this->data_count--;
     }
+}
+
+void csv::write_file() {
+    //Creamos el objeto para leer del archivo
+    ofstream output_file;
+    output_file.open(file_name, ios::out | ios::trunc);
+
+    //Si el archivo está abierto...
+    if (output_file.is_open()) {
+
+        if (has_headers == true) {
+            for (int i = 0; i < headers.size(); i++) {
+                output_file << headers[i];
+                if (i != headers.size() - 1) {
+                    output_file << ',';
+                }
+            }
+            output_file << '\n';
+
+        }
+
+        for (int i = 0; i < data_count; i++) {
+            for (int j = 0; j < widths.size(); j++) {
+                output_file << data[i][j];
+                if (j != widths.size() - 1) {
+                    output_file << ',';
+                }
+            }
+            output_file << '\n';
+        }
+    }
+}
+
+vector<string> csv::get_row(int index) {
+    return (vector<string>)data[index];
+}
+
+vector<string> csv::get_column(int index) {
+    vector<string> column;
+    for (int i = 0; i < data_count; i++) {
+        column.push_back(((vector<string>)data[i]).at(index));
+    }
+    return column;
+}
+
+vector<string> csv::get_max(int column) {
+    int max = 0;
+    for (int i = 0; i < data_count; i++) {
+        if (((vector<string>)(((vector<vector < string>>)data)[i])).at(column) > ((vector<string>)(((vector<vector < string>>)data)[max])).at(column)) {
+            max = i;
+        }
+    }
+    return (vector<string>)data[max];
+}
+
+vector<string> csv::get_min(int column) {
+    int min = 999999;
+    for (int i = 0; i < data_count; i++) {
+        if (((vector<string>)(((vector<vector < string>>)data)[i])).at(column) < ((vector<string>)(((vector<vector < string>>)data)[min])).at(column)) {
+            min = i;
+        }
+    }
+    return (vector<string>)data[min];
+}
+
+csv* csv::concat(csv* file, string filename) {
+
+    if (((vector<string>)file->data[0]).size() != ((vector<string>)this->data[0]).size()) {
+        return NULL;
+    }
+    bool new_header = false;
+    if (this->has_headers && file->has_headers) {
+        for (int i = 0; i < this->headers.size(); i++) {
+            if (this->headers[i] != file->headers[i]) {
+                return NULL;
+            }
+        }
+    }
+    vector<string> nHeaders;
+    if (this->has_headers || file->has_headers) {
+        new_header = true;
+        if (this->has_headers) {
+            nHeaders = this->headers;
+        } else {
+            nHeaders = file->headers;
+        }
+    }
+
+    csv* new_file = new csv();
+    new_file->file_name = filename;
+    new_file->has_headers = new_header;
+    if (new_header) {
+        new_file->headers = nHeaders;
+    }
+
+    new_file->data_count = (this->data_count + file->data_count);
+
+    for (int i = 0; i < this->data_count; i++) {
+        new_file->data.push_back((vector<string>)this->data[i]);
+    }
+
+    for (int i = 0; i < file->data_count; i++) {
+        new_file->data.push_back((vector<string>)file->data[i]);
+    }
+
+    for (int i = 0; i < widths.size(); i++) {
+        new_file->widths.push_back((this->widths[i] > file->widths[i] ? this->widths[i] : file->widths[i]));
+    }
+    return new_file;
 }
 

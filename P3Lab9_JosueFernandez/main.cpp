@@ -13,14 +13,13 @@ using std::endl;
 
 int main(int argc, char** argv) {
     
-    csv* file = new csv("archivo.csv",true);
+    csv* file = new csv("archivo.csv",false);
     
     file->print_data();
     
-    file->truncate_column(5);
-    file->truncate_column(3);
-    file->truncate_row(2);
+    file->truncate_column(2);
     
+    cout << endl << endl;
     file->print_data();
     
     delete file;
