@@ -1,0 +1,8 @@
+sexo,dias_fiebre,dias_ultima_fiebre,plaquetas,linfocitos,clase
+M,4,1,136688.7493,0.494444554,Dengue_NoGrave_NoSignos
+M,3,0,246599.6941,0.335849066,Dengue_NoGrave_NoSignos
+F,1,2,218856.3239,0.265497085,No_Dengue
+F,5,0,143238.036,0.451400227,Dengue_Grave
+F,3,0,156329.7494,0.480272163,Dengue_NoGrave_NoSignos
+M,3,0,382763.5883,0.35814203,No_Dengue
+M,5,0,125192.6051,0.557911052,Dengue_NoGrave_SignosAlarma

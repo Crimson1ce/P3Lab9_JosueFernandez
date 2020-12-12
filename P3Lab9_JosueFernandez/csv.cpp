@@ -261,23 +261,29 @@ vector<string> csv::get_column(int index) {
 }
 
 vector<string> csv::get_max(int column) {
-    int max = 0;
-    for (int i = 0; i < data_count; i++) {
-        if (((vector<string>)(((vector<vector < string>>)data)[i])).at(column) > ((vector<string>)(((vector<vector < string>>)data)[max])).at(column)) {
-            max = i;
+    int position = 0;
+    string max = ((vector<string>)data.at(0)).at(column);
+    for (int i = 0; i < data_count - 1; i++) {
+        if (max < ((vector<string>)data.at(i+1)).at(column)) {
+            max = ((vector<string>)data.at(i+1)).at(column);
+            position = i;
         }
+
     }
-    return (vector<string>)data[max];
+    return (vector<string>)data[position];
 }
 
 vector<string> csv::get_min(int column) {
-    int min = 999999;
-    for (int i = 0; i < data_count; i++) {
-        if (((vector<string>)(((vector<vector < string>>)data)[i])).at(column) < ((vector<string>)(((vector<vector < string>>)data)[min])).at(column)) {
-            min = i;
+    int position = 0;
+    string min = ((vector<string>)data.at(0)).at(column);
+    for (int i = 0; i < data_count - 1; i++) {
+        if (min > ((vector<string>)data.at(i+1)).at(column)) {
+            min = ((vector<string>)data.at(i+1)).at(column);
+            position = i;
         }
+
     }
-    return (vector<string>)data[min];
+    return (vector<string>)data[position];
 }
 
 csv* csv::concat(csv* file, string filename) {
@@ -326,3 +332,7 @@ csv* csv::concat(csv* file, string filename) {
     return new_file;
 }
 
+vector<vector<string>> csv::sort_data(int column, bool up) {
+    
+    
+}

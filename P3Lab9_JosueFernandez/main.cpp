@@ -13,11 +13,16 @@ using std::endl;
 
 int main(int argc, char** argv) {
     
-    csv* file = new csv("archivo.csv",false);
-    
+    csv* file = new csv("prototipoChikito.csv",true);
     file->print_data();
     
-    file->truncate_column(2);
+    file->truncate_column(4);
+    file->truncate_row(2);
+    file->truncate_row(2);
+    
+    cout << ((vector<string>)file->get_max(3)).at(3)<< endl;
+    cout << ((vector<string>)file->get_min(3)).at(3);
+
     
     cout << endl << endl;
     file->print_data();
